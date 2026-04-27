@@ -1,6 +1,6 @@
 # =============================================================================
 # BANKNOT DOĞRULAMA PROJESİ
-# Görev 3: Gelişmiş Modeller (SVM ve Random Forest)
+# Gelişmiş Modeller (SVM ve Random Forest)
 # =============================================================================
 
 import sys
@@ -25,7 +25,7 @@ from sklearn.metrics import accuracy_score, confusion_matrix, classification_rep
 # Grafik stilleri
 sns.set_style("whitegrid")
 
-# --- 1. Veriyi Hazırlama (Önceki Görevlerden) ---
+# --- Veriyi Hazırlama ---
 sutun_isimleri = ['variance', 'skewness', 'curtosis', 'entropy', 'class']
 df = pd.read_csv('data_banknote_authentication.txt', header=None, names=sutun_isimleri)
 
@@ -43,8 +43,8 @@ print("=" * 70)
 print("VERİ HAZIRLIĞI TAMAMLANDI")
 print("=" * 70)
 
-# --- 2. Support Vector Classification (SVM) - Linear Kernel ---
-print("\n--- 1. SVM (Kernel: Linear) ---")
+# --- Support Vector Classification (SVM) - Linear Kernel ---
+print("\n--- SVM (Kernel: Linear) ---")
 svm_linear = SVC(kernel='linear', random_state=42)
 svm_linear.fit(X_train, y_train)
 y_pred_svm_linear = svm_linear.predict(X_test)
@@ -54,8 +54,8 @@ print(f"SVM (Linear) Accuracy: {acc_svm_linear:.4f} ({acc_svm_linear*100:.2f}%)"
 print("\nClassification Report (Linear):")
 print(classification_report(y_test, y_pred_svm_linear, target_names=['Gerçek (0)', 'Sahte (1)']))
 
-# --- 3. Support Vector Classification (SVM) - RBF Kernel ---
-print("\n--- 2. SVM (Kernel: RBF) ---")
+# --- Support Vector Classification (SVM) - RBF Kernel ---
+print("\n--- SVM (Kernel: RBF) ---")
 svm_rbf = SVC(kernel='rbf', random_state=42)
 svm_rbf.fit(X_train, y_train)
 y_pred_svm_rbf = svm_rbf.predict(X_test)
@@ -65,8 +65,8 @@ print(f"SVM (RBF) Accuracy: {acc_svm_rbf:.4f} ({acc_svm_rbf*100:.2f}%)")
 print("\nClassification Report (RBF):")
 print(classification_report(y_test, y_pred_svm_rbf, target_names=['Gerçek (0)', 'Sahte (1)']))
 
-# --- 4. Random Forest Classifier ---
-print("\n--- 3. Random Forest (n_estimators=100) ---")
+# --- Random Forest Classifier ---
+print("\n--- Random Forest (n_estimators=100) ---")
 rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
 rf_model.fit(X_train, y_train)
 y_pred_rf = rf_model.predict(X_test)
@@ -76,7 +76,7 @@ print(f"Random Forest Accuracy: {acc_rf:.4f} ({acc_rf*100:.2f}%)")
 print("\nClassification Report (Random Forest):")
 print(classification_report(y_test, y_pred_rf, target_names=['Gerçek (0)', 'Sahte (1)']))
 
-# --- 5. Özellik Önemi (Feature Importance) ---
+# --- Özellik Önemi (Feature Importance) ---
 importances = rf_model.feature_importances_
 feature_names = X.columns
 
@@ -98,7 +98,7 @@ plt.savefig('feature_importance.png', dpi=150, bbox_inches='tight')
 print("\n[OK] Özellik önemi grafiği 'feature_importance.png' olarak kaydedildi.")
 
 
-# --- 6. Karmaşıklık Matrislerinin Görselleştirilmesi ---
+# --- Karmaşıklık Matrislerinin Görselleştirilmesi ---
 cm_svm_linear = confusion_matrix(y_test, y_pred_svm_linear)
 cm_svm_rbf = confusion_matrix(y_test, y_pred_svm_rbf)
 cm_rf = confusion_matrix(y_test, y_pred_rf)
@@ -128,6 +128,5 @@ plt.savefig('advanced_confusion_matrices.png', dpi=150, bbox_inches='tight')
 print("[OK] 3 Modelin Karmaşıklık matrisleri 'advanced_confusion_matrices.png' olarak kaydedildi.")
 
 print("\n" + "=" * 70)
-print("GÖREV 3 TAMAMLANDI")
+print("GELİŞMİŞ MODELLERİN EĞİTİMİ TAMAMLANDI")
 print("=" * 70)
-print("\n[HAZIR] Görev 4 (Yapay Sinir Ağları - YSA) için hazırız! Komutunuzu bekliyorum.")

@@ -1,6 +1,6 @@
 # =============================================================================
 # BANKNOT DOĞRULAMA PROJESİ
-# Görev 2: Temel (Baseline) Modellerin Kurulumu ve Değerlendirilmesi
+# Temel (Baseline) Modellerin Kurulumu ve Değerlendirilmesi
 # =============================================================================
 
 import sys
@@ -25,7 +25,7 @@ from sklearn.metrics import accuracy_score, confusion_matrix, classification_rep
 # Grafik stilleri
 sns.set_style("whitegrid")
 
-# --- 1. Veriyi Hazırlama (Görev 1'den) ---
+# --- Veriyi Hazırlama ---
 sutun_isimleri = ['variance', 'skewness', 'curtosis', 'entropy', 'class']
 df = pd.read_csv('data_banknote_authentication.txt', header=None, names=sutun_isimleri)
 
@@ -45,8 +45,8 @@ print("Eğitim seti boyutu :", X_train.shape)
 print("Test seti boyutu   :", X_test.shape)
 print("=" * 70)
 
-# --- 2. Gaussian Naive Bayes Modeli ---
-print("\n--- 1. Gaussian Naive Bayes (GaussianNB) ---")
+# --- Gaussian Naive Bayes Modeli ---
+print("\n--- Gaussian Naive Bayes (GaussianNB) ---")
 nb_model = GaussianNB()
 nb_model.fit(X_train, y_train)
 y_pred_nb = nb_model.predict(X_test)
@@ -57,8 +57,8 @@ print(f"GaussianNB Accuracy (Doğruluk): {nb_accuracy:.4f} ({nb_accuracy*100:.2f
 print("\nGaussianNB Sınıflandırma Raporu (Classification Report):")
 print(classification_report(y_test, y_pred_nb, target_names=['Gerçek (0)', 'Sahte (1)']))
 
-# --- 3. K-Nearest Neighbors (KNN) Modeli ---
-print("\n--- 2. K-Nearest Neighbors (KNN, n_neighbors=5) ---")
+# --- K-Nearest Neighbors (KNN) Modeli ---
+print("\n--- K-Nearest Neighbors (KNN, n_neighbors=5) ---")
 knn_model = KNeighborsClassifier(n_neighbors=5)
 knn_model.fit(X_train, y_train)
 y_pred_knn = knn_model.predict(X_test)
@@ -70,7 +70,7 @@ print("\nKNN Sınıflandırma Raporu (Classification Report):")
 print(classification_report(y_test, y_pred_knn, target_names=['Gerçek (0)', 'Sahte (1)']))
 
 
-# --- 4. Karmaşıklık Matrislerinin (Confusion Matrix) Görselleştirilmesi ---
+# --- Karmaşıklık Matrislerinin (Confusion Matrix) Görselleştirilmesi ---
 cm_nb = confusion_matrix(y_test, y_pred_nb)
 cm_knn = confusion_matrix(y_test, y_pred_knn)
 
@@ -95,6 +95,5 @@ plt.savefig('confusion_matrices.png', dpi=150, bbox_inches='tight')
 print("\n[OK] Karmaşıklık matrisleri görseli 'confusion_matrices.png' olarak kaydedildi.")
 
 print("\n" + "=" * 70)
-print("GÖREV 2 TAMAMLANDI")
+print("TEMEL MODELLERİN EĞİTİMİ TAMAMLANDI")
 print("=" * 70)
-print("\n[HAZIR] Görev 3 (Gelişmiş Modeller: SVM ve Random Forest) için hazırız! Komutunuzu bekliyorum.")

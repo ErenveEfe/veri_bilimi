@@ -1,6 +1,6 @@
 # =============================================================================
 # BANKNOT DOĞRULAMA PROJESİ
-# Görev 4: Yapay Sinir Ağları (YSA) ile İkili Sınıflandırma
+# Yapay Sinir Ağları (YSA) ile İkili Sınıflandırma
 # =============================================================================
 
 import sys
@@ -29,7 +29,7 @@ from tensorflow.keras.layers import Dense
 # Grafik stilleri
 sns.set_style("whitegrid")
 
-# --- 1. Veriyi Hazırlama (Önceki Görevlerden) ---
+# --- Veriyi Hazırlama ---
 sutun_isimleri = ['variance', 'skewness', 'curtosis', 'entropy', 'class']
 df = pd.read_csv('data_banknote_authentication.txt', header=None, names=sutun_isimleri)
 
@@ -47,7 +47,7 @@ print("=" * 70)
 print("VERİ HAZIRLIĞI TAMAMLANDI")
 print("=" * 70)
 
-# --- 2. YSA Modeli Mimarisi (Architecture) ---
+# --- YSA Modeli Mimarisi (Architecture) ---
 print("\n--- YSA Modeli Kuruluyor ---")
 model = Sequential()
 
@@ -62,10 +62,10 @@ model.add(Dense(1, activation='sigmoid'))
 
 model.summary()
 
-# --- 3. Modeli Derleme (Compile) ---
+# --- Modeli Derleme (Compile) ---
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-# --- 4. Eğitimi Başlatma (Training) ---
+# --- Eğitimi Başlatma (Training) ---
 print("\n--- YSA Eğitimi Başlıyor (Epochs: 50, Batch Size: 16) ---")
 history = model.fit(
     X_train, y_train,
@@ -75,7 +75,7 @@ history = model.fit(
     verbose=1
 )
 
-# --- 5. Öğrenme Eğrileri (Learning Curves) Çizimi ---
+# --- Öğrenme Eğrileri (Learning Curves) Çizimi ---
 fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
 # Kayıp (Loss) Grafiği
@@ -98,7 +98,7 @@ plt.tight_layout()
 plt.savefig('ysa_learning_curves.png', dpi=150, bbox_inches='tight')
 print("\n[OK] Öğrenme eğrileri 'ysa_learning_curves.png' olarak kaydedildi.")
 
-# --- 6. Değerlendirme ve Eşik (Threshold) Uygulaması ---
+# --- Değerlendirme ve Eşik (Threshold) Uygulaması ---
 print("\n--- Test Seti Üzerinde Tahmin ---")
 # Tahminler olasılık (0.0 - 1.0) olarak döner
 y_pred_probs = model.predict(X_test)
@@ -112,7 +112,7 @@ print(f"YSA Accuracy (Doğruluk): {acc_ysa:.4f} ({acc_ysa*100:.2f}%)")
 print("\nYSA Sınıflandırma Raporu (Classification Report):")
 print(classification_report(y_test, y_pred_classes, target_names=['Gerçek (0)', 'Sahte (1)']))
 
-# --- 7. Karmaşıklık Matrisi (Confusion Matrix) ---
+# --- Karmaşıklık Matrisi (Confusion Matrix) ---
 cm_ysa = confusion_matrix(y_test, y_pred_classes)
 
 plt.figure(figsize=(7, 5))
@@ -126,5 +126,5 @@ plt.savefig('ysa_confusion_matrix.png', dpi=150, bbox_inches='tight')
 print("[OK] YSA Karmaşıklık matrisi 'ysa_confusion_matrix.png' olarak kaydedildi.")
 
 print("\n" + "=" * 70)
-print("GÖREV 4 (FİNAL) TAMAMLANDI")
+print("YSA MODELİ EĞİTİMİ TAMAMLANDI")
 print("=" * 70)

@@ -1,13 +1,13 @@
 # =============================================================================
 # BANKNOT DOĞRULAMA PROJESİ
-# Görev 1: Veri Yükleme, Keşifsel Veri Analizi (EDA) ve Ön İşleme
+# Veri Yükleme, Keşifsel Veri Analizi (EDA) ve Ön İşleme
 # =============================================================================
 
 import sys
 import io
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-# --- 1. Gerekli Kütüphanelerin Import Edilmesi ---
+# --- Gerekli Kütüphanelerin Import Edilmesi ---
 import pandas as pd
 import numpy as np
 import matplotlib
@@ -22,7 +22,7 @@ sns.set_style("whitegrid")
 plt.rcParams['figure.figsize'] = (10, 6)
 plt.rcParams['font.size'] = 12
 
-# --- 2. Veriyi Okuma ve Sütun İsimlerini Atama ---
+# --- Veriyi Okuma ve Sütun İsimlerini Atama ---
 # Dosyada başlık (header) satırı yok, bu yüzden header=None kullanıyoruz
 # Sütun isimlerini 'names' parametresiyle manuel olarak atıyoruz
 sutun_isimleri = ['variance', 'skewness', 'curtosis', 'entropy', 'class']
@@ -33,29 +33,29 @@ print("=" * 70)
 print("VERİ SETİ BAŞARIYLA YÜKLENDİ")
 print("=" * 70)
 
-# --- 3. Verinin Genel Yapısını İnceleme ---
+# --- Verinin Genel Yapısını İnceleme ---
 
-# 3a. İlk 5 satır
+# İlk 5 satır
 print("\n--- İlk 5 Satır (head) ---")
 print(df.head())
 
-# 3b. Son 5 satır
+# Son 5 satır
 print("\n--- Son 5 Satır (tail) ---")
 print(df.tail())
 
-# 3c. Veri seti boyutu
+# Veri seti boyutu
 print(f"\n--- Veri Seti Boyutu ---")
 print(f"Satır sayısı: {df.shape[0]}, Sütun sayısı: {df.shape[1]}")
 
-# 3d. Veri tipleri ve genel bilgi
+# Veri tipleri ve genel bilgi
 print("\n--- Veri Seti Bilgisi (info) ---")
 df.info()
 
-# 3e. Temel istatistiksel özet
+# Temel istatistiksel özet
 print("\n--- İstatistiksel Özet (describe) ---")
 print(df.describe().round(4))
 
-# --- 4. Eksik Değer Kontrolü ---
+# --- Eksik Değer Kontrolü ---
 print("\n--- Eksik Değer Kontrolü ---")
 eksik_degerler = df.isnull().sum()
 print(eksik_degerler)
@@ -66,7 +66,7 @@ if eksik_degerler.sum() == 0:
 else:
     print("[UYARI] Veri setinde eksik değerler mevcut! İlgili işlemler yapılmalıdır.")
 
-# --- 5. Hedef Değişken (class) Dağılımı ---
+# --- Hedef Değişken (class) Dağılımı ---
 print("\n--- Hedef Değişken Dağılımı ---")
 sinif_dagilimi = df['class'].value_counts()
 print(sinif_dagilimi)
@@ -103,7 +103,7 @@ plt.savefig('sinif_dagilimi.png', dpi=150, bbox_inches='tight')
 plt.show()
 print("[OK] Sınıf dağılım grafiği 'sinif_dagilimi.png' olarak kaydedildi.")
 
-# --- 6. Özelliklerin Ölçeklendirilmesi (StandardScaler) ---
+# --- Özelliklerin Ölçeklendirilmesi (StandardScaler) ---
 # Bağımsız değişkenler (features) ve hedef değişkeni (target) ayırıyoruz
 X = df.drop('class', axis=1)  # Özellikler (variance, skewness, curtosis, entropy)
 y = df['class']                # Hedef değişken (0 veya 1)
@@ -122,7 +122,7 @@ X_scaled_df = pd.DataFrame(X_scaled, columns=X.columns)
 print(f"\nÖlçeklendirme SONRASI - Özellik ortalamaları (~0 olmalı):\n{X_scaled_df.mean().round(4)}")
 print(f"\nÖlçeklendirme SONRASI - Özellik standart sapmaları (~1 olmalı):\n{X_scaled_df.std().round(4)}")
 
-# --- 7. Eğitim ve Test Setlerine Ayırma (Train/Test Split) ---
+# --- Eğitim ve Test Setlerine Ayırma (Train/Test Split) ---
 # %80 Eğitim, %20 Test - random_state sabitleyerek tekrarlanabilirlik sağlıyoruz
 X_train, X_test, y_train, y_test = train_test_split(
     X_scaled, y, test_size=0.20, random_state=42, stratify=y
@@ -139,7 +139,7 @@ print(y_test.value_counts())
 
 # --- ÖZET ---
 print("\n" + "=" * 70)
-print("GÖREV 1 TAMAMLANDI - ÖZET")
+print("İŞLEM TAMAMLANDI - ÖZET")
 print("=" * 70)
 print(f"• Toplam gözlem sayısı  : {df.shape[0]}")
 print(f"• Toplam özellik sayısı : {X.shape[1]}")
@@ -150,4 +150,3 @@ print(f"• Eğitim seti           : {X_train.shape[0]} gözlem")
 print(f"• Test seti             : {X_test.shape[0]} gözlem")
 print(f"• Ölçeklendirme         : StandardScaler uygulandı")
 print("=" * 70)
-print("\n[HAZIR] Görev 2 için hazırız! Komutunuzu bekliyorum.")
