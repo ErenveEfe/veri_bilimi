@@ -1,3 +1,4 @@
+import os
 import sys
 import io
 import pandas as pd
@@ -16,7 +17,12 @@ import model_knn
 import model_svm_linear
 import model_svm_rbf
 import model_random_forest
-import model_ysa
+try:
+    import model_ysa
+    ysa_available = True
+except ImportError:
+    print("UYARI: TensorFlow/Keras kütüphaneleri bulunamadığı için YSA modeli atlanacak.")
+    ysa_available = False
 
 def load_and_preprocess_data(dataset_path):
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
@@ -188,81 +194,103 @@ def load_and_preprocess_data(dataset_path):
 
 def main():
     # Veri setinin ismini buradan değiştirebilirsiniz
-    DATASET_PATH = 'data_banknote_authentication_100k.csv'
+    DATASET_PATH = 'data_banknote_authentication_10k.txt'
     
     print("Proje Başlatılıyor...\n")
     
-    # 1. Veri Yükleme ve Ön İşleme
-    X_train, X_test, y_train, y_test, feature_names = load_and_preprocess_data(DATASET_PATH)
+    # Scriptin bulunduğu klasörün yolunu alalım (veri_bilimi klasörü)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
     
-    # 2. Modelleri Çalıştırma
-    print("\n" + "="*70)
-    print("MODELLER ÇALIŞTIRILIYOR...")
-    print("="*70)
+    # Veri seti yolu
+    abs_dataset_path = os.path.join(script_dir, DATASET_PATH)
     
-    results = []
-    results.append(model_gaussian_nb.run_model(X_train, X_test, y_train, y_test))
-    results.append(model_knn.run_model(X_train, X_test, y_train, y_test))
-    results.append(model_svm_linear.run_model(X_train, X_test, y_train, y_test))
-    results.append(model_svm_rbf.run_model(X_train, X_test, y_train, y_test))
-    results.append(model_random_forest.run_model(X_train, X_test, y_train, y_test, feature_names))
-    results.append(model_ysa.run_model(X_train, X_test, y_train, y_test))
+    # Çıktı klasörünü de scriptin yanına oluşturalım
+    dataset_name = os.path.splitext(os.path.basename(DATASET_PATH))[0]
+    output_dir = os.path.join(script_dir, dataset_name)
     
-    print("\n" + "="*70)
-    print("MODEL PERFORMANS KARŞILAŞTIRMA GÖRSELLERİ OLUŞTURULUYOR...")
-    print("="*70)
-
-    # 1. Bar Chart (Modeller Arası Başarı Kıyaslama)
-    df_results = pd.DataFrame(results)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
     
-    plt.figure(figsize=(12, 6))
-    df_melted = df_results[['name', 'accuracy', 'precision', 'recall', 'f1']].melt(id_vars='name', var_name='Metric', value_name='Score')
-    sns.barplot(x='name', y='Score', hue='Metric', data=df_melted, palette='viridis')
-    plt.title('Modeller Arası Başarı Kıyaslama Tablosu', fontweight='bold', fontsize=14)
-    plt.ylim(0, 1.1)
-    plt.legend(loc='lower right')
-    plt.tight_layout()
-    plt.savefig('model_karsilastirma_bar_chart.png', dpi=150, bbox_inches='tight')
-    plt.close()
-    print("[OK] Modeller arası başarı kıyaslama grafiği 'model_karsilastirma_bar_chart.png' olarak kaydedildi.")
-
-    # 2. ROC Curve
-    plt.figure(figsize=(10, 8))
-    for res in results:
-        fpr, tpr, _ = roc_curve(y_test, res['y_pred_proba'])
-        roc_auc = auc(fpr, tpr)
-        plt.plot(fpr, tpr, lw=2, label=f"{res['name']} (AUC = {roc_auc:.3f})")
+    original_cwd = os.getcwd()
+    os.chdir(output_dir)
+    print(f"Çıktılar '{output_dir}' klasörüne kaydedilecek.\n")
     
-    plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
-    plt.xlim([0.0, 1.0])
-    plt.ylim([0.0, 1.05])
-    plt.xlabel('False Positive Rate (Yanlış Pozitif Oranı)')
-    plt.ylabel('True Positive Rate (Doğru Pozitif Oranı)')
-    plt.title('Modeller İçin ROC Eğrisi Karşılaştırması', fontweight='bold', fontsize=14)
-    plt.legend(loc="lower right")
-    plt.tight_layout()
-    plt.savefig('roc_egrisi_karsilastirma.png', dpi=150, bbox_inches='tight')
-    plt.close()
-    print("[OK] ROC Eğrisi karşılaştırması 'roc_egrisi_karsilastirma.png' olarak kaydedildi.")
-
-    # 3. Precision-Recall Curve
-    plt.figure(figsize=(10, 8))
-    for res in results:
-        precision, recall, _ = precision_recall_curve(y_test, res['y_pred_proba'])
-        plt.plot(recall, precision, lw=2, label=f"{res['name']}")
+    try:
+        # 1. Veri Yükleme ve Ön İşleme
+        X_train, X_test, y_train, y_test, feature_names = load_and_preprocess_data(abs_dataset_path)
         
-    plt.xlabel('Recall (Duyarlılık)')
-    plt.ylabel('Precision (Hassasiyet)')
-    plt.title('Modeller İçin Precision-Recall Eğrisi Karşılaştırması', fontweight='bold', fontsize=14)
-    plt.legend(loc="lower left")
-    plt.tight_layout()
-    plt.savefig('precision_recall_egrisi_karsilastirma.png', dpi=150, bbox_inches='tight')
-    plt.close()
-    print("[OK] Precision-Recall Eğrisi karşılaştırması 'precision_recall_egrisi_karsilastirma.png' olarak kaydedildi.")
-    
-    print("\n" + "="*70)
-    print("TÜM İŞLEMLER BAŞARIYLA TAMAMLANDI!")
-    print("="*70)
+        # 2. Modelleri Çalıştırma
+        print("\n" + "="*70)
+        print("MODELLER ÇALIŞTIRILIYOR...")
+        print("="*70)
+        
+        results = []
+        results.append(model_gaussian_nb.run_model(X_train, X_test, y_train, y_test))
+        results.append(model_knn.run_model(X_train, X_test, y_train, y_test))
+        results.append(model_svm_linear.run_model(X_train, X_test, y_train, y_test))
+        results.append(model_svm_rbf.run_model(X_train, X_test, y_train, y_test))
+        results.append(model_random_forest.run_model(X_train, X_test, y_train, y_test, feature_names))
+        if ysa_available:
+            results.append(model_ysa.run_model(X_train, X_test, y_train, y_test))
+        
+        print("\n" + "="*70)
+        print("MODEL PERFORMANS KARŞILAŞTIRMA GÖRSELLERİ OLUŞTURULUYOR...")
+        print("="*70)
+
+        # 1. Bar Chart (Modeller Arası Başarı Kıyaslama)
+        df_results = pd.DataFrame(results)
+        
+        plt.figure(figsize=(12, 6))
+        df_melted = df_results[['name', 'accuracy', 'precision', 'recall', 'f1']].melt(id_vars='name', var_name='Metric', value_name='Score')
+        sns.barplot(x='name', y='Score', hue='Metric', data=df_melted, palette='viridis')
+        plt.title('Modeller Arası Başarı Kıyaslama Tablosu', fontweight='bold', fontsize=14)
+        plt.ylim(0, 1.1)
+        plt.legend(loc='lower right')
+        plt.tight_layout()
+        plt.savefig('model_karsilastirma_bar_chart.png', dpi=150, bbox_inches='tight')
+        plt.close()
+        print("[OK] Modeller arası başarı kıyaslama grafiği 'model_karsilastirma_bar_chart.png' olarak kaydedildi.")
+
+        # 2. ROC Curve
+        plt.figure(figsize=(10, 8))
+        for res in results:
+            fpr, tpr, _ = roc_curve(y_test, res['y_pred_proba'])
+            roc_auc = auc(fpr, tpr)
+            plt.plot(fpr, tpr, lw=2, label=f"{res['name']} (AUC = {roc_auc:.3f})")
+        
+        plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+        plt.xlim([0.0, 1.0])
+        plt.ylim([0.0, 1.05])
+        plt.xlabel('False Positive Rate (Yanlış Pozitif Oranı)')
+        plt.ylabel('True Positive Rate (Doğru Pozitif Oranı)')
+        plt.title('Modeller İçin ROC Eğrisi Karşılaştırması', fontweight='bold', fontsize=14)
+        plt.legend(loc="lower right")
+        plt.tight_layout()
+        plt.savefig('roc_egrisi_karsilastirma.png', dpi=150, bbox_inches='tight')
+        plt.close()
+        print("[OK] ROC Eğrisi karşılaştırması 'roc_egrisi_karsilastirma.png' olarak kaydedildi.")
+
+        # 3. Precision-Recall Curve
+        plt.figure(figsize=(10, 8))
+        for res in results:
+            precision, recall, _ = precision_recall_curve(y_test, res['y_pred_proba'])
+            plt.plot(recall, precision, lw=2, label=f"{res['name']}")
+            
+        plt.xlabel('Recall (Duyarlılık)')
+        plt.ylabel('Precision (Hassasiyet)')
+        plt.title('Modeller İçin Precision-Recall Eğrisi Karşılaştırması', fontweight='bold', fontsize=14)
+        plt.legend(loc="lower left")
+        plt.tight_layout()
+        plt.savefig('precision_recall_egrisi_karsilastirma.png', dpi=150, bbox_inches='tight')
+        plt.close()
+        print("[OK] Precision-Recall Eğrisi karşılaştırması 'precision_recall_egrisi_karsilastirma.png' olarak kaydedildi.")
+        
+        print("\n" + "="*70)
+        print("TÜM İŞLEMLER BAŞARIYLA TAMAMLANDI!")
+        print("="*70)
+        
+    finally:
+        os.chdir(original_cwd)
 
 if __name__ == "__main__":
     main()
