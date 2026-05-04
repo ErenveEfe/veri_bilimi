@@ -33,53 +33,51 @@ def load_and_preprocess_data(dataset_path):
     sutun_isimleri = ['variance', 'skewness', 'curtosis', 'entropy', 'class']
     df = pd.read_csv(dataset_path, header=None, names=sutun_isimleri)
 
-    print("=" * 70)
-    print("VERİ SETİ BAŞARIYLA YÜKLENDİ")
-    print("=" * 70)
+    print("VERI SETI BASARIYLA YUKLENDI")
 
     # İlk 5 satır
-    print("\n--- İlk 5 Satır (head) ---")
+    print("\n--- ILK 5 SATIR ---")
     print(df.head())
 
     # Son 5 satır
-    print("\n--- Son 5 Satır (tail) ---")
+    print("\n--- SON 5 SATIR ---")
     print(df.tail())
 
     # Veri seti boyutu
-    print(f"\n--- Veri Seti Boyutu ---")
-    print(f"Satır sayısı: {df.shape[0]}, Sütun sayısı: {df.shape[1]}")
+    print(f"\n--- VERI SETI BOYUTU ---")
+    print(f"SATIR SAYISI: {df.shape[0]}, SUTUN SAYISI: {df.shape[1]}")
 
     # Veri tipleri ve genel bilgi
-    print("\n--- Veri Seti Bilgisi (info) ---")
+    print("\n--- VERI SETI BILGISI ---")
     df.info()
 
     # Temel istatistiksel özet
-    print("\n--- İstatistiksel Özet (describe) ---")
+    print("\n--- ISTATISTIKSEL OZET ---")
     print(df.describe().round(4))
 
     # Eksik Değer Kontrolü
-    print("\n--- Eksik Değer Kontrolü ---")
+    print("\n--- EKSIK DEGER KONTROLU ---")
     eksik_degerler = df.isnull().sum()
     print(eksik_degerler)
-    print(f"\nToplam eksik değer sayısı: {eksik_degerler.sum()}")
+    print(f"\nTOPLAM EKSIK DEGER SAYISI: {eksik_degerler.sum()}")
 
     if eksik_degerler.sum() == 0:
-        print("[OK] Veri setinde HİÇBİR eksik değer bulunmamaktadır.")
+        print("VERI SETINDE HICBIR EKSIK DEGER BULUNAMAMISTIR.")
     else:
-        print("[UYARI] Veri setinde eksik değerler mevcut! İlgili işlemler yapılmalıdır.")
+        print("VERI SETINDE EKSIK DEGERLER MEVCUTTUR! ILGILI ISLEMLER YAPILMALIDIR.")
 
     # Hedef Değişken (class) Dağılımı
-    print("\n--- Hedef Değişken Dağılımı ---")
+    print("\n--- HEDEF DEGISKEN DAGILIMI ---")
     sinif_dagilimi = df['class'].value_counts()
     print(sinif_dagilimi)
-    print(f"\nSınıf oranları:")
+    print(f"\nSINIF ORANLARI:")
     print(df['class'].value_counts(normalize=True).round(4) * 100)
 
     # Hedef değişken dağılım grafiği
     fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
     renk_paleti = ['#2ecc71', '#e74c3c']
-    sinif_etiketleri = ['Gerçek (0)', 'Sahte (1)']
+    sinif_etiketleri = ['GERCEK (0)', 'SAHTE (1)']
 
     bars = axes[0].bar(sinif_etiketleri, sinif_dagilimi.values, color=renk_paleti,
                        edgecolor='black', linewidth=1.2)
@@ -128,7 +126,7 @@ def load_and_preprocess_data(dataset_path):
     plt.tight_layout()
     plt.savefig('kutu_grafikleri_boxplot.png', dpi=150, bbox_inches='tight')
     plt.close()
-    print("[OK] Kutu grafikleri 'kutu_grafikleri_boxplot.png' olarak kaydedildi.")
+    print("Kutu grafikleri 'kutu_grafikleri_boxplot.png' olarak kaydedildi.")
 
     # 4. Yoğunluk Grafikleri (KDE)
     plt.figure(figsize=(12, 8))
